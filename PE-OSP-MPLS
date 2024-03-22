@@ -1,0 +1,320 @@
+!Software Version V200R022C00SPC500
+#
+sysname PE-LAJEADO NOVO
+#
+ipv6
+#
+router id 10.99.99.50
+#
+lnp disable
+#
+stp disable
+#
+authentication-profile name default_authen_profile
+authentication-profile name dot1x_authen_profile
+authentication-profile name dot1xmac_authen_profile
+authentication-profile name mac_authen_profile
+authentication-profile name multi_authen_profile
+authentication-profile name portal_authen_profile
+#
+set save-configuration interval 60
+#
+telnet server enable
+telnet ipv6 server enable
+#
+http server-source -i MEth0/0/1           
+#                                         
+set if-mib sample-interval 0              
+#                                         
+dhcp enable                               
+#                                         
+diffserv domain default                   
+#                                         
+radius-server template default            
+#                                         
+bfd                                       
+#                                         
+mpls lsr-id 10.99.99.50                   
+mpls                                      
+ mpls te                                  
+ mpls te signaling-delay-trigger enable   
+ mpls te auto-frr                         
+ label advertise non-null                 
+ mpls rsvp-te                             
+ mpls rsvp-te hello                       
+ mpls rsvp-te timer refresh 45            
+ mpls rsvp-te hello full-gr               
+ mpls rsvp-te send-message suggest-label  
+ mpls rsvp-te send-message extend-class-type value-length-type
+ mpls rsvp-te send-message session-attribute without-affinity
+ mpls rsvp-te fast-reroute-bandwidth compatible
+ mpls rsvp-te send-message down-reason    
+ mpls te cspf                             
+ mpls te cspf preferred-igp ospf 1        
+#                                         
+mpls l2vpn                                
+#                                         
+pw-template PE-DATACENTER                 
+ peer-address 10.99.99.22                 
+ control-word                             
+#                                         
+pw-template PE-PORTO-FRANCO               
+ peer-address 10.99.99.39                 
+ control-word                             
+#                                         
+mpls ldp                                  
+#                                         
+#                                         
+mpls ldp remote-peer pe-datacenter        
+ remote-ip 10.99.99.22                    
+#                                         
+mpls ldp remote-peer pe-porto-franco      
+ remote-ip 10.99.99.39                    
+#                                         
+pki realm default                         
+ certificate-check none                   
+#                                         
+free-rule-template name default_free_rule 
+#                                         
+portal-access-profile name portal_access_profile
+#                                         
+drop-profile default                      
+#                                         
+aaa                                       
+ authentication-scheme default            
+  authentication-mode local               
+ authentication-scheme radius             
+  authentication-mode radius              
+ authorization-scheme default             
+  authorization-mode local                
+ accounting-scheme default                
+  accounting-mode none                    
+ local-aaa-user password policy administrator
+  password history record number 0        
+  password expire 0                       
+ domain default                           
+  authentication-scheme radius            
+  accounting-scheme default               
+  radius-server default                   
+ domain default_admin                     
+  authentication-scheme default           
+  accounting-scheme default               
+ local-user NOCnetfacil password irreversible-cipher $1c$]Rx45"8dY6$}=$+QVG357DBrC)Qqv+1tLE@IzO1#AvFoX9"{YEP$
+ local-user NOCnetfacil privilege level 15
+ local-user NOCnetfacil service-type telnet ssh http
+#                                         
+ospfv3 1                                  
+ router-id 10.99.99.50                    
+ import-route direct                      
+ import-route static                      
+#                                         
+interface Vlanif1                         
+ shutdown                                 
+#                                         
+interface MEth0/0/1                       
+ ip address 192.168.1.253 255.255.255.0   
+#                                         
+interface XGigabitEthernet0/0/1           
+ undo portswitch                          
+ description PTP-PORTO FRANCO             
+ mtu 9216                                 
+ ipv6 enable                              
+ ip address 10.99.101.206 255.255.255.252 
+ ipv6 address auto link-local             
+ ospfv3 1 area 0.0.0.0                    
+ ospfv3 network-type p2p                  
+ ospf network-type p2p                    
+ ospf bfd enable                          
+ ospf ldp-sync                            
+ ospf enable 1 area 0.0.0.0               
+ mpls                                     
+ mpls mtu 9200                            
+ mpls te                                  
+ mpls rsvp-te                             
+ mpls rsvp-te bfd enable                  
+ mpls ldp                                 
+ mpls ldp transport-address LoopBack99    
+ jumboframe enable 10218                  
+#                                         
+interface XGigabitEthernet0/0/2           
+ undo portswitch                          
+#                                         
+interface XGigabitEthernet0/0/2.10        
+ dot1q termination vid 10                 
+ ip address 10.99.1.21 255.255.255.252    
+ statistic enable both                    
+#                                         
+interface XGigabitEthernet0/0/2.4010      
+ description olt-lajeado                  
+ mtu 9000                                 
+ qinq stacking vid 4010 pe-vid 4010       
+ mpls l2vc pw-template PE-DATACENTER 4010 raw
+ statistic enable both                    
+#                                         
+interface XGigabitEthernet0/0/3           
+#                                         
+interface XGigabitEthernet0/0/4           
+#                                         
+interface XGigabitEthernet0/0/5           
+#                                         
+interface XGigabitEthernet0/0/6           
+ undo portswitch                          
+ description PTP-SÃO RAIMUNDO             
+ mtu 9216                                 
+ ipv6 enable                              
+ ip address 10.99.101.209 255.255.255.252 
+ ipv6 address auto link-local             
+ ospfv3 1 area 0.0.0.0                    
+ ospfv3 network-type p2p                  
+ ospf network-type p2p                    
+ ospf bfd enable                          
+ ospf ldp-sync                            
+ ospf enable 1 area 0.0.0.0               
+ mpls                                     
+ mpls mtu 9200                            
+ mpls te                                  
+ mpls rsvp-te                             
+ mpls rsvp-te bfd enable                  
+ mpls ldp                                 
+ mpls ldp transport-address LoopBack99    
+ jumboframe enable 10218                  
+#                                         
+interface XGigabitEthernet0/0/7           
+#                                         
+interface XGigabitEthernet0/0/8           
+ undo portswitch                          
+ ip address 10.125.40.9 255.255.255.252   
+#                                         
+interface XGigabitEthernet0/0/9           
+#                                         
+interface XGigabitEthernet0/0/10          
+#                                         
+interface XGigabitEthernet0/0/11          
+#                                         
+interface XGigabitEthernet0/0/12          
+#                                         
+interface XGigabitEthernet0/0/13          
+#                                         
+interface XGigabitEthernet0/0/14          
+#                                         
+interface XGigabitEthernet0/0/15          
+#                                         
+interface XGigabitEthernet0/0/16          
+#                                         
+interface XGigabitEthernet0/0/17          
+#                                         
+interface XGigabitEthernet0/0/18          
+#                                         
+interface XGigabitEthernet0/0/19          
+#                                         
+interface XGigabitEthernet0/0/20          
+#                                         
+interface XGigabitEthernet0/0/21          
+#                                         
+interface XGigabitEthernet0/0/22          
+#                                         
+interface XGigabitEthernet0/0/23          
+#                                         
+interface XGigabitEthernet0/0/24          
+#                                         
+interface 40GE0/0/1                       
+#                                         
+interface 40GE0/0/2                       
+#                                         
+interface 40GE0/0/3                       
+#                                         
+interface 40GE0/0/4                       
+#                                         
+interface 40GE0/0/5                       
+#                                         
+interface 40GE0/0/6                       
+#                                         
+interface NULL0                           
+#                                         
+interface LoopBack0                       
+ ip address 10.199.199.100 255.255.255.255
+#                                         
+interface LoopBack99                      
+ description LoopBackOSPF                 
+ ipv6 enable                              
+ ip address 10.99.99.50 255.255.255.255   
+ ipv6 address auto link-local             
+ ospfv3 1 area 0.0.0.0                    
+ ospf enable 1 area 0.0.0.0               
+#                                         
+ospf 1 router-id 10.99.99.50              
+ import-route direct                      
+ import-route static                      
+ silent-interface LoopBack99              
+ preference 110                           
+ opaque-capability enable                 
+ area 0.0.0.0                             
+  network 10.0.0.0 0.255.255.255 description 10.0.0.0/8
+  mpls-te enable                          
+#                                         
+undo icmp name timestamp-request receive  
+#                                         
+snmp-agent                                
+snmp-agent local-engineid 800007DB03E47727E98EB0
+snmp-agent community read cipher %^%#0Fy|K%slf@09}S3tihs$.Y3|+0{qrImC$Y:;K3NM%[YF0nrjF+<TKs#bfaIL4`X\AgeTj%6&N&R*#JK6%^%#
+snmp-agent sys-info version v2c v3        
+snmp-agent protocol source-status all-interface
+undo snmp-agent protocol source-status ipv6 all-interface
+#                                         
+stelnet server enable                     
+ssh user NOCnetfacil                     
+ssh user NOCnetfacil authentication-type all
+ssh user NOCnetfacil service-type all     
+ssh user NOKE                             
+ssh user NOKE authentication-type all     
+ssh user NOKE service-type all            
+ssh server-source all-interface           
+ssh server cipher aes256_ctr aes128_ctr   
+ssh server hmac sha2_256                  
+ssh server key-exchange dh_group16_sha512 dh_group15_sha512 dh_group14_sha256 dh_group_exchange_sha256
+ssh client cipher aes256_ctr aes128_ctr   
+ssh client hmac sha2_256                  
+ssh client key-exchange dh_group16_sha512 dh_group15_sha512 dh_group14_sha256 dh_group_exchange_sha256
+ssh server dh-exchange min-len 2048       
+ssh server publickey rsa_sha2_512 rsa_sha2_256
+#                                         
+user-interface con 0                      
+ authentication-mode password             
+ set authentication password cipher $1c$')2(P2OJQ/$7:VM/mO2RUEiFV19w*ITo1K`=Qw{#J0\F)=Fli*&$
+user-interface vty 0 4                    
+ authentication-mode aaa                  
+user-interface vty 16 20                  
+#                                         
+wlan                                      
+ traffic-profile name default             
+ security-profile name default            
+ security-profile name default-wds        
+ security-profile name default-mesh       
+ ssid-profile name default                
+ vap-profile name default                 
+ wds-profile name default                 
+ mesh-handover-profile name default       
+ mesh-profile name default                
+ regulatory-domain-profile name default   
+ air-scan-profile name default            
+ rrm-profile name default                 
+ radio-2g-profile name default            
+ radio-5g-profile name default            
+ wids-spoof-profile name default          
+ wids-whitelist-profile name default      
+ wids-profile name default                
+ ap-system-profile name default           
+ port-link-profile name default           
+ wired-port-profile name default          
+ ap-group name default                    
+ provision-ap                             
+#                                         
+dot1x-access-profile name dot1x_access_profile
+#                                         
+mac-access-profile name mac_access_profile
+#                                         
+ops                                       
+#                                         
+remote-unit                               
+#                                         
+return    
